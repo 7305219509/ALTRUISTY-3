@@ -1,0 +1,53 @@
+#include <iostream>
+#include <vector>
+#include <deque>
+using namespace std;
+
+int findMinOfMaxInSubarrays(const vector<int> &arr, int k) {
+    deque<int> dq;
+    vector<int> maxInWindow;
+    
+    for (int i = 0; i < arr.size(); ++i) {
+        // Remove elements that are out of this window
+        if (!dq.empty() && dq.front() <= i - k) {
+            dq.pop_front();
+        }
+        
+        // Remove smaller elements as they are not useful
+        while (!dq.empty() && arr[dq.back()] <= arr[i]) {
+            dq.pop_back();
+        }
+        
+        // Add the current element index
+        dq.push_back(i);
+        
+        // Record the maximum for this window
+        if (i >= k - 1) {
+            maxInWindow.push_back(arr[dq.front()]);
+        }
+    }
+    
+    // Find the minimum of the maximums
+    int minOfMax = *min_element(maxInWindow.begin(), maxInWindow.end());
+    return minOfMax;
+}
+
+int main() {
+    int k, n;
+    cout << "Enter the length of the segment (k): ";
+    cin >> k;
+    cout << "Enter the size of the array (n): ";
+    cin >> n;
+
+    vector<int> arr(n);
+    cout << "Enter the array elements:\n";
+    for (int i = 0; i < n; ++i) {
+        cin >> arr[i];
+    }
+
+    int result = findMinOfMaxInSubarrays(arr, k);
+    cout << "The minimum of the maximums of all contiguous subarrays of length k is: " << result << endl;
+
+    return 0;
+}
+
